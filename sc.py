@@ -56,6 +56,7 @@ def login():
             except:
                 print("学校可能在为难你，正在重试。。。")
 def getlist():
+    #splanId需要自己更改
     Payload = json.dumps({"tag":"lessonSelectLogTcm@selectGlobalStore","branch":"quick","params":   {"splanId":940}})
     clist = s.post(scoreurl, headers = headers, data = Payload, cookies = s.cookies, timeout = 6) #获取捷选课列 表
     info = json.loads(clist.text)
@@ -103,7 +104,7 @@ def main():
         try:
             ttime = requests.head('http://www.sogou.com').headers['Date'][5:25]
             ltime = time.strptime(ttime, "%d %b %Y %H:%M:%S")
-            #if里面的内容需要改成相应的抢课时间
+            #choosetime需要改成相应的抢课时间
             choosetime = 2018*31536000 + 12*2592000 + 26*86400 + 3*3600 + 52*60 - 2
             if (ltime.tm_year*31536000+ltime.tm_mon*2592000+ltime.tm_mday*86400+ltime.tm_hour*3600+ltime.tm_min*60+ltime.tm_sec >= choosetime):
             #if (ltime.tm_mday > 26 or (ltime.tm_mday == 26 and ltime.tm_hour >= 0)):
