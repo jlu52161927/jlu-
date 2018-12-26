@@ -112,7 +112,7 @@ def main():
                 return 
             cnt += 1
             time.sleep(1)
-            if (cnt > 100):
+            if (cnt % 100 == 0):
                 try:
                     getlist()
                 except:
