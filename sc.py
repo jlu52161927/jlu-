@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Created on Wed Dec 26 09:53:14 2018
 
@@ -57,7 +57,7 @@ def login():
                 print("学校可能在为难你，正在重试。。。")
 def getlist():
     #splanId需要自己更改
-    Payload = json.dumps({"tag":"lessonSelectLogTcm@selectGlobalStore","branch":"quick","params":   {"splanId":940}})
+    Payload = json.dumps({"tag":"lessonSelectLogTcm@selectGlobalStore","branch":"quick","params":   {"splanId":950}})
     clist = s.post(scoreurl, headers = headers, data = Payload, cookies = s.cookies, timeout = 6) #获取捷选课列 表
     info = json.loads(clist.text)
     info = info['value']
@@ -78,11 +78,11 @@ def selectclass ():
             return
         for i in info:
             time.sleep(0.1)
-            print('正在抢' + i['lessonSegment']['fullName'] + ',' + i['teachClassMaster']['lessonTeachers'][0]['teacher']['name'] + '!')
+            print('正在抢:' + i['lessonSegment']['fullName'] + ',' + i['teachClassMaster']['lessonTeachers'][0]['teacher']['name'] + '!')
             try:
                 c = json.loads(s.post(selectclassurl, headers = headers, timeout = 6, cookies = s.cookies, data = json.dumps({"lsltId":i['lsltId'],"opType":"Y"})).text)
                 if (c['errno'] == 0):
-                    print ('抢到' + i['lessonSegment']['fullName'] + ',' + i['teachClassMaster']['lessonTeachers'][0]['teacher']['name'] + '!')
+                    print ('抢到:' + i['lessonSegment']['fullName'] + ',' + i['teachClassMaster']['lessonTeachers'][0]['teacher']['name'] + '!')
             except:
                 print ('出了点小问题，正在重试...')
                 time.sleep(5)
@@ -105,7 +105,7 @@ def main():
             ttime = requests.head('http://www.sogou.com').headers['Date'][5:25]
             ltime = time.strptime(ttime, "%d %b %Y %H:%M:%S")
             #choosetime需要改成相应的抢课时间
-            choosetime = 2018*31536000 + 12*2592000 + 26*86400 + 3*3600 + 52*60 - 2
+            choosetime = 2018*31536000 + 12*2592000 + 27*86400 + 0*3600 + 30*60 - 2
             if (ltime.tm_year*31536000+ltime.tm_mon*2592000+ltime.tm_mday*86400+ltime.tm_hour*3600+ltime.tm_min*60+ltime.tm_sec >= choosetime):
             #if (ltime.tm_mday > 26 or (ltime.tm_mday == 26 and ltime.tm_hour >= 0)):
                 selectclass()
