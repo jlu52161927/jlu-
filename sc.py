@@ -105,6 +105,7 @@ def main():
             ttime = requests.head('http://www.sogou.com').headers['Date'][5:25]
             ltime = time.strptime(ttime, "%d %b %Y %H:%M:%S")
             #choosetime需要改成相应的抢课时间
+            #GMT时间      #年             #月          #日        #时       #分
             choosetime = 2018*31536000 + 12*2592000 + 27*86400 + 0*3600 + 30*60 - 2
             if (ltime.tm_year*31536000+ltime.tm_mon*2592000+ltime.tm_mday*86400+ltime.tm_hour*3600+ltime.tm_min*60+ltime.tm_sec >= choosetime):
             #if (ltime.tm_mday > 26 or (ltime.tm_mday == 26 and ltime.tm_hour >= 0)):
