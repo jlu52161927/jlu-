@@ -12,6 +12,9 @@ import json
 import hashlib
 import time
 s = requests.session()
+s.headers.update({'Referer':'http://uims.jlu.edu.cn/ntms/userLogin.jsp?reason=logout'})
+username = ''
+password = ''
 posturl = "http://uims.jlu.edu.cn/ntms/j_spring_security_check" #post data的url
 scoreurl = "http://uims.jlu.edu.cn/ntms/service/res.do" #获取成绩的url
 selectclassurl = "http://uims.jlu.edu.cn/ntms/action/select/select-lesson.do"
@@ -30,15 +33,14 @@ def login():
     data = {
             'j_username':user,
             'j_password':alp,
-            'mousePath':'PGwABPAgDNPDgDeRIADvTKgEBTMAEQTOAEhTOwE0TQAFDTQgFUSRQFlRRwF2RSAGIRSAGXRSQGoRTAG5RTgHIRUQHYRVAHpRVgH6QWQIKQXgIcPYAIsOaAI8NbgJOLeAJeLfgJvKhgKAJlQKRIoAKiHsAKyHuALDGvALUFvwLlFwAL0GwAMTGwgMaGwwMnGxQM3GyANIGzANYGzwNpG0gN6G2QOLG2wOaG3wOrG4AO9G4QPOG4gPjG4wPvG5gP+cDwKv'
+            'mousePath':'NEAABNBAD5OCQELOEgEcPGQEsQJgE+QMQFNPPQFfPTwFvPWAGAPYQGSQcAGiSfQGyVjwHCWlwHTZowHkarQH0btwIFdxQIWdywImd0gI3d3QJHe5QJZe8QJqW8wP1'
         }
     while True:
         #ttime = time.strptime(requests.head('http://uims.jlu.edu.cn').headers['Date'][5:25])
         # print(ttime)
             try:
-                c = s.post(posturl, data=data, timeout=15)  # post data
-                global x
-                x = c
+                c = s.post(posturl, data=data, timeout=8)  # post data
+                #print (c.url)
                 if c.url == 'http://uims.jlu.edu.cn/ntms/userLogin.jsp?reason=loginError':
                     print('大兄弟，密码错啦！')
                     user = input('请重新输入账号：')
@@ -48,13 +50,36 @@ def login():
                     data = {
             'j_username':user,
             'j_password':alp,
-            'mousePath':'PGwABPAgDNPDgDeRIADvTKgEBTMAEQTOAEhTOwE0TQAFDTQgFUSRQFlRRwF2RSAGIRSAGXRSQGoRTAG5RTgHIRUQHYRVAHpRVgH6QWQIKQXgIcPYAIsOaAI8NbgJOLeAJeLfgJvKhgKAJlQKRIoAKiHsAKyHuALDGvALUFvwLlFwAL0GwAMTGwgMaGwwMnGxQM3GyANIGzANYGzwNpG0gN6G2QOLG2wOaG3wOrG4AO9G4QPOG4gPjG4wPvG5gP+cDwKv'
+            'mousePath':'NEAABNBAD5OCQELOEgEcPGQEsQJgE+QMQFNPPQFfPTwFvPWAGAPYQGSQcAGiSfQGyVjwHCWlwHTZowHkarQH0btwIFdxQIWdywImd0gI3d3QJHe5QJZe8QJqW8wP1'
             }
                 else:
+                    global username
+                    global password
+                    username = user
+                    password = psd
                     print('登陆成功！')
                     return 
             except:
-                print("学校可能在为难你，正在重试。。。")
+                print("登陆超时，正在重试...")
+#自动重新登录               
+def relogin(user, psd):
+    s.headers.update({'Referer':'http://uims.jlu.edu.cn/ntms/userLogin.jsp?reason=logout'})
+    alp = 'UIMS' + user + psd
+    alp = hashlib.md5(alp.encode(encoding='utf-8')).hexdigest()
+    data = {
+            'j_username':user,
+            'j_password':alp,
+            'mousePath':'PFgABPAQBHPAwBWPBgBiPDQByPFQCDPHgCTPJgCkPLQC1ONgDFOOwDWOQQDnOSAD4OTQEIOUgEZOVgEqOWwE6OYgFLOaAFcObgFtOcgF9OdgGNOeQGdOfAGvPgAHAPhAHQQiAHgRjQHyRkwIDRmQITSnwIkSpgI1SrwJFStwJVSugJmSvgJ3SwQKISwwKYSxQKpSxgK6SxwLOSyALaSygLsSzgL8S0QMNS1AMeT2AMtT3QM/T5ANQU6wNgHRwGA'
+        }
+    while True:
+        try:
+            s.post(posturl, data=data, timeout=15)  # post data
+            print('重新登陆成功！')
+            return 
+        except:
+            print("学校可能在为难你，正在重试...")
+    
+
 def getlist():
     #splanId需要自己更改
     Payload = json.dumps({"tag":"lessonSelectLogTcm@selectGlobalStore","branch":"quick","params":   {"splanId":950}})
@@ -117,7 +142,8 @@ def main():
                 try:
                     getlist()
                 except:
-                    print ('出了点小问题，正在重试...')
+                    print ('出了点小问题，正在重新登录...')
+                    relogin (username, password)
         except:
             print('出了点小问题，正在重试...')
             time.sleep(2)
